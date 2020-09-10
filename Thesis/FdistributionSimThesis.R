@@ -1,3 +1,4 @@
+setwd("~/Documents/University/Thesis/Rstuff/ThesisStuff/Thesis")
 source("thesisUtility.R")
 
 N <- 10000
@@ -22,11 +23,11 @@ sigmat <- sqrt(sigmat2)
 
 
 nfreqs <- nFFT/2
-num.sim <- 10000
+num.sim <- 1
 
-#ar <- c(0.6, -0.3)
-#ma <- c(1, 0.8, 0.6)
-#trnd <- 10*seq(0,1, length.out = N)^2
+ar <- c(0.6, -0.3)
+ma <- c(1, 0.8, 0.6)
+trnd <- 10*seq(0,1, length.out = N)^2
 
 seed <- 666
 set.seed(seed)
@@ -45,13 +46,13 @@ for(n in 1:numNW){
   Vdot <- dpssp11R(DW,NW[n])
   AP <- dpssap(DW$v, maxdeg = M, alpha = 1)
   for(i in 1:num.sim){
-    #X1 <- rgumbel(n = N/4, 0, 0.1)
-    #X2 <- rgumbel(n = N/4, 0, 0.2)
-    #X3 <- rgumbel(n = N/4, 0, 0.5)
-    #X4 <- rgumbel(n = N/4, 0, 0.8)
-    #X.tmp <- c(X1,X2,X3,X4)
-    #X <- trnd + arima.sim(model = list(ar=ar,ma=ma), n = N, innov = X.tmp)
-    X <- rnorm(N, sd = sigmat)
+    X1 <- rgumbel(n = N/4, 0, 0.1)
+    X2 <- rgumbel(n = N/4, 0, 0.2)
+    X3 <- rgumbel(n = N/4, 0, 0.5)
+    X4 <- rgumbel(n = N/4, 0, 0.8)
+    X.tmp <- c(X1,X2,X3,X4)
+    X <- trnd + as.numeric(arima.sim(model = list(ar=ar,ma=ma), n = N, innov = X.tmp))
+    #X <- rnorm(N, sd = sigmat)
     tapered <- X * DW$v
     pad <- rbind(tapered, matrix(0, nrow = nFFT-N, ncol = K[n]))
     yk <- mvfft(pad)[subBand+1,,drop = FALSE]

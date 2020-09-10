@@ -5,7 +5,6 @@
 # THE MODULATION BANDWIDTH WILL BE THE SAME FOR ALL SIGNALS
 ##########################################################################################
 
-
 source("thesisUtility.R")
 
 
@@ -33,6 +32,16 @@ ARMA <- list(ar = ar, ma = ma)
 
 #signal setup
 #amplitudes
+
+#for Gaussian white noise case
+#A1 <- 0.5
+#A2 <- 0.5
+#A3 <- 0.5
+#A4 <- 0.5
+#A5 <- 0.5
+#A6 <- 0.5
+
+#for coloured noise case
 A1 <- 0.5
 A2 <- 0.4
 A3 <- 0.2
@@ -49,6 +58,11 @@ f5 <- freq[which.min(abs(freq-0.2))]
 f6 <- freq[which.min(abs(freq-0.25))]
 
 #time and band parameters
+
+#for Gaussian white noise case
+#B1 <- B2 <- B3 <- 0.0025
+
+#for coloured noise case
 B1 <- 0.0025
 B2 <- 0.0035
 B3 <- 0.0015
@@ -136,7 +150,7 @@ for(j in 1:numNW){
     pad <- rbind(tapered, matrix(0, nrow = nFFT-N, ncol = K[j]))
     yk <- mvfft(pad)[subBand+1, , drop = FALSE]
     
-    HFarray[,i,j] <- HarmonicF(yk, DW$v)
+    HFarray[,i,j] <- HarmonicF(yk, DW$v)$HF
     
     modF <- ModulatedF17(yk, derivIN = Vdot, apIN = AP, dpssIN = DS)
     
@@ -225,6 +239,8 @@ plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
 legend("right", legend = expression(phi[1], phi[2], phi[3], phi[4], phi[5]), col = 1:5,
        lty = 1, horiz = FALSE, xpd = TRUE, bty = 'n', inset = c(0.01,0), lwd = 2)
 mtext("Modulating functions", side = 2, outer = TRUE, line = -1.75)
+mtext("t", side = 1, outer = TRUE, line = -1.75)
+
 
 
 #layout(matrix(c(1,2,3,4,4,5), nrow = 2, ncol = 3, byrow = TRUE), widths = c(1,1.25), heights = c(1,1))
@@ -657,6 +673,8 @@ mtext("Density", side = 2, outer = TRUE, line = 2.2)
 #######################
 # plots of test statistics around carrier frequencies
 
+
+#The index 8008 was for coloured noise (I think) nope
 ind <- 8008
 F3d0 <- F3array[1,,ind,1]
 F3 <- F3array[,,ind,3]
@@ -675,26 +693,41 @@ for(m in 1:(M+1)){
 }
 
 par(mfrow = c(1,1))
+par(oma = c(4,4,0,4), mar = c(0,0,1,1))
 plot(freqF, F3d0, type = 'l', log = 'y', xlim = c(0.23,0.27), lwd = 2)
+mtext("Frequency", side = 1, line = 2)
+mtext(expression(paste(F[3],"(0;f)")), side = 2, line = 2)
 plot(freqF, F3[2,], type = 'l', log = 'y', xlim = c(0.07,0.13), lwd = 2)
 lines(freqF, mF3[1,], col = 2, lwd = 2)
+mtext("Degree 1 Test Statistics", side = 2, line = 2)
+mtext("Frequency", side = 1, line = 2)
 
 plot(freqF, F3[3,], type = 'l', log = 'y', xlim = c(0.27,0.33), lwd = 2)
 lines(freqF, mF3[2,], col = 2, lwd = 2)
+mtext("Degree 2 Test Statistics", side = 2, line = 2)
+mtext("Frequency", side = 1, line = 2)
 
 plot(freqF, F3[4,], type = 'l', log = 'y', xlim = c(0.28,0.34), lwd = 2)
 lines(freqF, mF3[3,], col = 2, lwd = 2)
+mtext("Degree 3 Test Statistics", side = 2, line = 2)
+mtext("Frequency", side = 1, line = 2)
 
 plot(freqF, F3[5,], type = 'l', log = 'y', xlim = c(0.37,0.43), lwd = 2)
 lines(freqF, mF3[4,], col = 2, lwd = 2)
+mtext("Degree 4 Test Statistics", side = 2, line = 2)
+mtext("Frequency", side = 1, line = 2)
 
 plot(freqF, F3sin, type = 'l', log = 'y', xlim = c(0.17,0.23), lwd = 2)
 lines(freqF, mF3sin, col = 2, lwd = 2)
+mtext("Degree 6 Test Statistics", side = 2, line = 2)
+mtext("Frequency", side = 1, line = 2)
 
 #what about F3(2;f) for NW > 7?
 F3d2 <- F3array[3,,111,4]
 F3d2[which(F3d2 < 1)] <- 1
 plot(freqF, F3d2, type = 'l', log = 'y', lwd = 2, xlim = c(0.27,0.33))
+mtext("Frequency", side = 1, line = 2)
+mtext(expression(paste(F[3],"(2;f)")), side = 2, line = 2)
 abline(v = c(f2 - W[4], f2 + W[4]), col = 3, lty = 3, lwd = 2)
 abline(v = c(f2 - B3, f2 + B3), col = 2, lty = 2, lwd = 2)
 #########################
